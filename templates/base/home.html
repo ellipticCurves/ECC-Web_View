@@ -103,30 +103,30 @@
       <h1 id="title" class="text-center mb-5">
         Elliptic Curve Calculator over Finite Field
       </h1>
-
-      <div class="col-12">
-        <div class="input-group mb-3">
-          <label class="input-group-text" for="id_opt">Select Curve:</label>
-          {{ adp_form.opt }}
-        </div>
-      </div>
-
-      <p id="equation1">
-        Equation of Twisted Edwards Curve over finite field: $$y² = \frac{ax²
-        -1}{dx² - 1} \hspace{3mm}mod \hspace{1mm}p$$
-      </p>
-      <p id="equation2" style="display: none;">
-        Equation of Short Weirstrass Curve over finite field: $$y² = x³ + ax + d
-        \hspace{3mm}mod \hspace{1mm}p$$
-      </p>
-      <p id="equation3" style="display: none;">
-        Equation of Montgomery Curve over finite field: $$By² = x³ + Ax² + x
-        \hspace{3mm}mod \hspace{1mm}p$$
-      </p>
-      <p class="mb-1 fw-bolder">User Input</p>
-      <p class="mt-1">Please enter the parameters of the curve :</p>
+      
       <form class="mb-3 row" method="post">
         {% csrf_token %}
+        <div class="col-12">
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="id_opt">Select Curve:</label>
+            {{ adp_form.opt }}
+        </div>
+        </div>
+
+        <p id="equation1">
+        Equation of Twisted Edwards Curve over finite field: $$y² = \frac{ax²
+        -1}{dx² - 1} \hspace{3mm}mod \hspace{1mm}p$$
+        </p>
+        <p id="equation2" style="display: none;">
+        Equation of Short Weirstrass Curve over finite field: $$y² = x³ + ax + d
+        \hspace{3mm}mod \hspace{1mm}p$$
+        </p>
+        <p id="equation3" style="display: none;">
+        Equation of Montgomery Curve over finite field: $$By² = x³ + Ax² + x
+        \hspace{3mm}mod \hspace{1mm}p$$
+        </p>
+        <p class="mb-1 fw-bolder">User Input</p>
+        <p class="mt-1">Please enter the parameters of the curve :</p>
 
         <div class="col-12 col-sm-4 col-md-3 col-xl-2">
           <div class="input-group mb-3">
@@ -230,28 +230,41 @@
   <script>
     input = document.getElementsByTagName("input");
     select = document.getElementById("id_opt");
+
     equation1 = document.getElementById("equation1");
     equation2 = document.getElementById("equation2");
     equation3 = document.getElementById("equation3");
 
-    // console.log(equation1.style.display);
+    id_a = document.getElementById("id_a");
+    id_d = document.getElementById("id_d");
+    id_p = document.getElementById("id_p");
 
     select.addEventListener("change", () => {
         if (select.selectedIndex == 0) {
             equation1.style.display = "block";
             equation2.style.display = "none";
             equation3.style.display = "none";
-        } else if (select.selectedIndex == 1) {
+            id_a.labels[0].innerHTML = "a";
+            id_d.labels[0].innerHTML = "d";
+            id_p.labels[0].innerHTML = "p";
+        } 
+        else if (select.selectedIndex == 1) {
             equation1.style.display = "none";
             equation2.style.display = "block";
             equation3.style.display = "none";
-        } else if (select.selectedIndex == 2) {
+            id_a.labels[0].innerHTML = "a";
+            id_d.labels[0].innerHTML = "d";
+            id_p.labels[0].innerHTML = "p";
+        } 
+        else if (select.selectedIndex == 2) {
             equation1.style.display = "none";
             equation2.style.display = "none";
             equation3.style.display = "block";
+            id_a.labels[0].innerHTML = "A";
+            id_d.labels[0].innerHTML = "B";
+            id_p.labels[0].innerHTML = "p";
         }
-        console.log(select.selectedIndex);
-    }, false);
+    });
 
     for (let i = 0; i < input.length; i++) {
       input[i].classList.add("form-control");
