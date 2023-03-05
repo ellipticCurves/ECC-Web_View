@@ -103,28 +103,31 @@
       <h1 id="title" class="text-center mb-5">
         Elliptic Curve Calculator over Finite Field
       </h1>
-      <p id="equation">
+
+      <div class="col-12">
+        <div class="input-group mb-3">
+          <label class="input-group-text" for="id_opt">Select Curve:</label>
+          {{ adp_form.opt }}
+        </div>
+      </div>
+
+      <p id="equation1">
         Equation of Twisted Edwards Curve over finite field: $$y² = \frac{ax²
         -1}{dx² - 1} \hspace{3mm}mod \hspace{1mm}p$$
       </p>
-      <p>
+      <p id="equation2" style="display: none;">
         Equation of Short Weirstrass Curve over finite field: $$y² = x³ + ax + d
         \hspace{3mm}mod \hspace{1mm}p$$
       </p>
-      <p>
-        Equation of Montgomery Curve over finite field: $$dy² = x³ + ax² + x
+      <p id="equation3" style="display: none;">
+        Equation of Montgomery Curve over finite field: $$By² = x³ + Ax² + x
         \hspace{3mm}mod \hspace{1mm}p$$
       </p>
       <p class="mb-1 fw-bolder">User Input</p>
       <p class="mt-1">Please enter the parameters of the curve :</p>
       <form class="mb-3 row" method="post">
         {% csrf_token %}
-        <div class="col-12">
-          <div class="input-group mb-3">
-            <label class="input-group-text" for="id_opt">Select Curve:</label>
-            {{ adp_form.opt }}
-          </div>
-        </div>
+
         <div class="col-12 col-sm-4 col-md-3 col-xl-2">
           <div class="input-group mb-3">
             <label class="input-group-text" for="id_a">a:</label>
@@ -226,7 +229,30 @@
 
   <script>
     input = document.getElementsByTagName("input");
-    select = document.getElementsByTagName("select");
+    select = document.getElementById("id_opt");
+    equation1 = document.getElementById("equation1");
+    equation2 = document.getElementById("equation2");
+    equation3 = document.getElementById("equation3");
+
+    // console.log(equation1.style.display);
+
+    select.addEventListener("change", () => {
+        if (select.selectedIndex == 0) {
+            equation1.style.display = "block";
+            equation2.style.display = "none";
+            equation3.style.display = "none";
+        } else if (select.selectedIndex == 1) {
+            equation1.style.display = "none";
+            equation2.style.display = "block";
+            equation3.style.display = "none";
+        } else if (select.selectedIndex == 2) {
+            equation1.style.display = "none";
+            equation2.style.display = "none";
+            equation3.style.display = "block";
+        }
+        console.log(select.selectedIndex);
+    }, false);
+
     for (let i = 0; i < input.length; i++) {
       input[i].classList.add("form-control");
     }
