@@ -252,7 +252,7 @@
     id_d = document.getElementById("id_d");
     id_p = document.getElementById("id_p");
 
-    select.addEventListener("change", () => {
+    displayLabels = () => {
         if (select.selectedIndex == 0) {
             equation1.style.display = "block";
             equation2.style.display = "none";
@@ -277,7 +277,10 @@
             id_d.labels[0].innerHTML = "B";
             id_p.labels[0].innerHTML = "p";
         }
-    });
+    }
+    window.addEventListener("load", displayLabels);
+
+    select.addEventListener("change", displayLabels);
 
     for (let i = 0; i < input.length; i++) {
       input[i].classList.add("form-control");
