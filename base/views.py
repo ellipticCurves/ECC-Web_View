@@ -34,7 +34,17 @@ def home(request):
             lo = request.session['lo'] = int(new_p + 1 - 2*(new_p**0.5))
             hi = request.session['hi'] = int(new_p + 1 + 2*(new_p**0.5))
             prime = (new_p == p)
-            return render(request, 'base/home.html', {'adp_form': adp_form, 'stage': 2, 'a': a, 'd': d, 'p': p, 'new_p': new_p, 'lo': lo, 'hi': hi, 'prime': prime})
+
+            #deciding on labels        
+            a_label = 'a'
+            d_label = 'd'
+            p_label = 'p'
+
+            if opt == '3':              
+              a_label = 'A'
+              d_label = 'B'
+                        
+            return render(request, 'base/home.html', {'adp_form': adp_form, 'stage': 2, 'a': a, 'd': d, 'p': p, 'new_p': new_p, 'lo': lo, 'hi': hi, 'prime': prime, 'a_label': a_label, 'd_label': d_label, 'p_label': p_label})
     return render(request, 'base/home.html', {'adp_form': adp_form, 'stage': 1})
 
 def calc(request, start=0):
@@ -61,6 +71,14 @@ def calc(request, start=0):
             curve = montgomery_curve
         points = curve.generatePoints(a, d, new_p, start)
         opt_form = forms.opt_form()
+
+        a_label = 'a'
+        d_label = 'd'
+        p_label = 'p'
+        
+        if opt1 == '3':              
+          a_label = 'A'
+          d_label = 'B'
         
         # Operations +,-,* trigger POST
         if request.method == "POST":
@@ -89,7 +107,7 @@ def calc(request, start=0):
                 elif(opt == '5'):
                     (x_res,y_res) = curve.multiplypoint(a,d,new_p,(x1,y1), x2)
 
-                return render(request,'base/calculate.html',{'opt_form': opt_form, 'a': a, 'd': d, 'p': new_p, 'xarray': points[0], 'yarray': points[1], 'Array': zip(points[0], points[1]), 'point_count': len(points[0]), 'x_res': x_res, 'y_res': y_res, 'result': True, 'start': start, 'end': min(new_p-1, start+999), 'prev': max(0, start-1000), 'next': min(new_p-1, start+1000), 'p_minus_1': new_p-1,'curve': opt1})
+                return render(request,'base/calculate.html',{'opt_form': opt_form, 'a': a, 'd': d, 'p': new_p, 'xarray': points[0], 'yarray': points[1], 'Array': zip(points[0], points[1]), 'point_count': len(points[0]), 'x_res': x_res, 'y_res': y_res, 'result': True, 'start': start, 'end': min(new_p-1, start+999), 'prev': max(0, start-1000), 'next': min(new_p-1, start+1000), 'p_minus_1': new_p-1,'curve': opt1, 'a_label': a_label, 'd_label': d_label, 'p_label': p_label})
 
         # GET
-        return render(request,'base/calculate.html',{'opt_form': opt_form, 'a': a, 'd': d, 'p': new_p, 'xarray': points[0], 'yarray': points[1], 'Array': zip(points[0], points[1]), 'point_count': len(points[0]), 'start': start, 'end': min(new_p-1, start+999), 'prev': max(0, start-1000), 'next': min(new_p-1, start+1000), 'p_minus_1': new_p-1,'curve': opt1})
+        return render(request,'base/calculate.html',{'opt_form': opt_form, 'a': a, 'd': d, 'p': new_p, 'xarray': points[0], 'yarray': points[1], 'Array': zip(points[0], points[1]), 'point_count': len(points[0]), 'start': start, 'end': min(new_p-1, start+999), 'prev': max(0, start-1000), 'next': min(new_p-1, start+1000), 'p_minus_1': new_p-1,'curve': opt1, 'a_label': a_label, 'd_label': d_label, 'p_label': p_label})

@@ -170,11 +170,14 @@ def addPoint(x, m, p, A, B):
     y_coordinates.extend([int(y), int(p-y)])
 
 def generatePoints(a, b, p, start = 0):
+    if start > p:
+      start = 0
+
     totalPoints = 0
     p = getPrime(p)
     print("Prime field is:", p)
     print("")
-    for i in range(p):
+    for i in range(start, min(start+1000, p)):
         m = findM(a, b, i, p)
         
         quadraticResidue = legendre(m, p)
