@@ -4,9 +4,6 @@
 import gmpy2, random, sys
 # import graph_points as graph
 
-x_coordinates = []
-y_coordinates = []
-
 #hasse's theorem
 def hassesTheorem(prime):
     upperBound = prime + 1 + gmpy2.mul(2, gmpy2.isqrt(prime))
@@ -158,18 +155,10 @@ def tonelli_shanks(a: int, p: int, /):
     b_inverse = inverse_modulo(b, p)
     return _tonelli_shanks_recursive(a, 1, p, b, b_inverse)
 
-
-def addPoint(x, m, p, A, B):
-    if gmpy2.f_mod(p, 4) == 3:			
-      y = euler(m, p)
-    else:			
-      y = tonelli_shanks(m, p)
-
-    print("({}, {})  ({}, {})".format(x, y, x, p-y))
-    x_coordinates.extend([int(x), int(x)])
-    y_coordinates.extend([int(y), int(p-y)])
-
 def generatePoints(a, b, p, start = 0):
+    x_coordinates = []
+    y_coordinates = []
+
     if start > p:
       start = 0
 
@@ -182,7 +171,15 @@ def generatePoints(a, b, p, start = 0):
         
         quadraticResidue = legendre(m, p)
         if quadraticResidue == 1:
-            addPoint(i, m, p, a, b)
+            if gmpy2.f_mod(p, 4) == 3:			
+                y = euler(m, p)
+            else:			
+                y = tonelli_shanks(m, p)
+
+            print("({}, {})  ({}, {})".format(i, y, i, p-y))
+            x_coordinates.extend([int(i), int(i)])
+            y_coordinates.extend([int(y), int(p-y)])
+
             totalPoints += 2
         elif quadraticResidue == 0:
             print("({}, {})".format(i, 0))
@@ -236,6 +233,8 @@ def substractpoints(a, b, p, p1, p2):
     y2 = gmpy2.sub(0, y2)
     if y2 < 0 :
         y2 = y2 + p
+
+    p2 = x2, y2
     return addpoints(a, b, p, p1, p2)
 
 #doubling
