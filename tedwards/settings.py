@@ -31,10 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = True
 
 #commented out the hosts for the time being for local development
-ALLOWED_HOSTS = [
-    # 'twisted-edwards-calculator.herokuapp.com',
-    # 'localhost'
-]
+ALLOWED_HOSTS = ['https://ellipticcurvecalculator.onrender.com/']
 
 
 # Application definition
