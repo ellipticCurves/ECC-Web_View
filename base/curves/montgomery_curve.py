@@ -1,44 +1,45 @@
 #file: find_points.py
 #montgomery curve : By^2 = x^3 + Ax^2 + x
 
-import gmpy2, random, sys
+from sympy import mod_inverse, nextprime
+import random
 # import graph_points as graph
 
 #hasse's theorem
 def hassesTheorem(prime):
-    upperBound = prime + 1 + gmpy2.mul(2, gmpy2.isqrt(prime))
-    lowerBound = prime + 1 - gmpy2.mul(2, gmpy2.isqrt(prime))
+    upperBound = int(prime + 1 + 2*(prime ** 0.5))
+    lowerBound = int(prime + 1 - 2*(prime ** 0.5))
     print("According to hasse's theorem the total number of points should be in the range of {} {}".format(lowerBound, upperBound))
 
 #gets us the next prime if number isn't prime
 def getPrime(number):
-    if gmpy2.is_prime(number):
+    new_prime = nextprime(number - 1)
+    if number == new_prime:
         return number
     else:
-        next_prime = gmpy2.next_prime(number)
-        print("{} isn't a prime so we consider the next prime {} for calculations".format(number, next_prime))
-        return next_prime
+        print("{} isn't a prime so we consider the next prime {} for calculations".format(number, new_prime))
+        return new_prime
 
 #fast modular exponentiation
 def modular_pow(base, exponent, modulus):
     result = 1
     while exponent > 0:
         if exponent & 1:
-            result = gmpy2.f_mod(result * base, modulus)
+            result = (result * base) % modulus
         exponent = exponent >> 1
-        base = gmpy2.f_mod(base * base, modulus)
+        base = (base * base) % modulus
     return result
 
 #euler formula to calculate y
 def euler(quadraticResidue, prime):
-    return modular_pow(quadraticResidue, gmpy2.f_div(prime+1, 4), prime)
+    return modular_pow(quadraticResidue, (prime+1) // 4, prime)
 
 #y^2 = m (mod p); here m is the function of x
 def findM(a, b, x, p):
-    return gmpy2.f_mod((x*x*x + a*x*x + x) * (gmpy2.invert(b, p)), p)
+    return ((x*x*x + a*x*x + x) * (mod_inverse(b, p))) % p
 
 def findQRForSW(a, b, x, p):
-    return gmpy2.f_mod((x*x*x + a*x + b), p)
+    return (x*x*x + a*x + b) % p
 
 def legendre(a, p):
     return modular_pow(a, (p - 1) // 2, p)
@@ -171,7 +172,7 @@ def generatePoints(a, b, p, start = 0):
         
         quadraticResidue = legendre(m, p)
         if quadraticResidue == 1:
-            if gmpy2.f_mod(p, 4) == 3:			
+            if p % 4 == 3:			
                 y = euler(m, p)
             else:			
                 y = tonelli_shanks(m, p)
@@ -209,9 +210,9 @@ def addpoints(a, b, p, p1, p2):
         return (0, 0)
     else :
         try :
-            k = gmpy2.mul(gmpy2.sub(y2, y1) % p, gmpy2.invert(gmpy2.sub(x2, x1) % p, p)) % p
-            x3 = gmpy2.sub(gmpy2.sub(gmpy2.sub(gmpy2.mul(b, gmpy2.powmod(k, 2, p)) % p, a) % p, x1) % p, x2) % p
-            y3 = gmpy2.sub(gmpy2.sub(gmpy2.mul(gmpy2.add(gmpy2.add(gmpy2.mul(2, x1) % p, x2) % p, a) % p, k) % p, gmpy2.mul(b, gmpy2.powmod(k, 3, p)) % p), y1) % p
+            k = (((y2 - y1) % p) * mod_inverse((x2 - x1) % p, p)) % p
+            x3 = (((((((b * ((k ** 2) % p)) % p) - a) % p) - x1) % p) - x2) % p
+            y3 = ((((((((((2 * x1) % p) + x2) % p) + a) % p) * k) % p) - (b * ((k ** 3) % p)) % p) - y1) % p
             
             if x3 < 0:
                 x3 = x3 + p
@@ -230,7 +231,7 @@ def substractpoints(a, b, p, p1, p2):
     x2, y2 = p2
 
     print("Subtracting two points ({}, {}) and ({}, {})".format(x1, y1, x2, y2))
-    y2 = gmpy2.sub(0, y2)
+    y2 = -y2
     if y2 < 0 :
         y2 = y2 + p
 
@@ -243,9 +244,9 @@ def doublepoint(a,b,p,p1):
     if y == 0:
       return (0, 0)
     try :
-        k = gmpy2.mul(gmpy2.add(gmpy2.add(gmpy2.mul(gmpy2.powmod(x, 2, p), 3) % p, gmpy2.mul(gmpy2.mul(2, a) % p, x) % p) % p, 1) % p, gmpy2.invert(gmpy2.mul(gmpy2.mul(2, b) % p, y) % p, p))
-        x3 = gmpy2.sub(gmpy2.sub(gmpy2.sub(gmpy2.mul(b, gmpy2.powmod(k, 2, p)) % p, a) % p, x) % p, x) % p
-        y3 = gmpy2.sub(gmpy2.sub(gmpy2.mul(gmpy2.add(gmpy2.add(gmpy2.mul(2, x) % p, x) % p, a) % p, k) % p, gmpy2.mul(b, gmpy2.powmod(k, 3, p)) % p), y) % p
+        k = (((((((((x ** 2) % p) * 3) % p) + (((2 * a) % p) * x) % p) % p) + 1) % p) * mod_inverse((((2 * b) % p) * y) % p, p)) % p
+        x3 = (((((((b * ((k ** 2) % p)) % p) - a) % p) - x) % p) - x) % p
+        y3 = ((((((((((2 * x) % p) + x) % p) + a) % p) * k) % p) - (b * ((k ** 3) % p)) % p) - y) % p
 
         if x3 < 0:
             x3 = x3 + p
@@ -266,10 +267,10 @@ def multiplypoint(a,b,p,p1,k):
     # y0 = 0
     x, y = p1
     p0 = (0, 0)
-    idx = gmpy2.bit_length(k)
+    idx = k.bit_length()
     while idx >= 0:
         print("idx = ", idx)
-        if gmpy2.bit_test(k, idx):
+        if k & (1 << idx):
             # x0, y0 = pointAddition(x0, y0, x1, y1, a, b, p)
             p0 = addpoints(a, b, p, p0, p1)
             # x1, y1 = pointDoubling(x1, y1, a, b, p)
