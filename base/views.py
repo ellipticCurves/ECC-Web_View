@@ -111,3 +111,6 @@ def calc(request, start=0):
 
         # GET
         return render(request,'base/calculate.html',{'opt_form': opt_form, 'a': a, 'd': d, 'p': new_p, 'xarray': points[0], 'yarray': points[1], 'Array': zip(points[0], points[1]), 'point_count': len(points[0]), 'start': start, 'end': min(new_p-1, start+999), 'prev': max(0, start-1000), 'next': min(new_p-1, start+1000), 'p_minus_1': new_p-1,'curve': opt1, 'a_label': a_label, 'd_label': d_label, 'p_label': p_label})
+    
+def credits(request):
+    return render(request, 'base/credits.html')
