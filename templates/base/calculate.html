@@ -167,7 +167,7 @@
           Plotly.newPlot("myPlot", data, layout);
 
           //plots a new point in trace 1
-          var plot = (new_x, new_y)=>{
+          var plot = (new_x, new_y)=>{            
             if(prevPointClicked != ""){
               document.getElementById(prevPointClicked).style.backgroundColor = "lightgrey";
             }
@@ -212,10 +212,10 @@
         </div>
       </div>
       <div class="points-div mb-3">
-        <div class="row">
-          {% for i,j in Array %}
-          <div id="{{i}},{{j}}" onclick="plot({{i}},{{j}})" class="col col-6 text-center p-1 border border-2"><h5>({{i}},{{j}})<h5></div>
-          {% endfor %}
+        <div class="row" id="points">
+          <!-- {% for i,j in Array %}
+          <div id="{{i}},{{j}}" onclick="plot({{i}},{{j}})" class="col col-6 text-center p-1 border border-2"><h5>({{i}},{{j}})</h5></div>
+          {% endfor %} -->
         </div>
       </div>
       <form class="my-3 row" method="post">
@@ -399,4 +399,68 @@
       document.getElementById("cal_btn").focus();
     </script>
     {% endif %}
+
+  <script type="text/javascript">    
+    var xarray = {{xarray}}
+    var yarray = {{yarray}}
+    
+    var rowParentElement = document.getElementById("points")    
+
+    var i = 0;
+    var n = '{{point_count|safe}}'
+    //console.log("len", n)
+    //<div id="{{i}},{{j}}" onclick="plot({{i}},{{j}})" class="col col-6 text-center p-1 border border-2"><h5>({{i}},{{j}})<h5></div>
+
+    while(i < n-1) {
+      if(xarray[i] == xarray[i+1]) {        
+        var x1 = xarray[i];
+        var x2 = xarray[i+1];
+        var y1 = yarray[i];
+        var y2 = yarray[i+1];
+
+        var div1 = document.createElement("div")
+        div1.innerHTML = `<h5 id = ${x1},${y1} >(${x1}, ${y1})</h5>`
+        div1.id = x1+","+y1
+        div1.className = "col col-6 text-center p-1 border border-2"
+        //div1.onclick = "plot("+x1+","+y1+")"      
+        
+        var div2 = document.createElement("div")
+        div2.innerHTML = `<h5 id = ${x2},${y2} >(${x2}, ${y2})</h5>`
+        div2.id = x2+","+y2
+        div2.className = "col col-6 text-center p-1 border border-2"
+        
+        rowParentElement.appendChild(div1)
+        rowParentElement.appendChild(div2)
+
+        i += 2
+      } else {
+        var x = xarray[i];        
+        var y = yarray[i];        
+
+        var div = document.createElement("div")
+        div.innerHTML = `<h5 id = ${x},${y} >(${x}, ${y})</h5>`
+        div.id = x+","+y
+        div.className = "col col-12 text-center p-1 border border-2"        
+        rowParentElement.appendChild(div)
+
+        i++
+      }
+    }
+
+    if(i < n) {
+      var x = xarray[i];        
+        var y = yarray[i];        
+
+        var div = document.createElement("div")
+        div.innerHTML = `<h5 id = ${x},${y} >(${x}, ${y})</h5>`
+        div.id = x+","+y
+        div.className = "col col-12 text-center p-1 border border-2"        
+        rowParentElement.appendChild(div)
+    }
+
+    rowParentElement.addEventListener('click', (event) => {
+      var list = event.target.id.split(",").map(Number)
+      plot(list[0], list[1])
+    })
+  </script>
 </html>
